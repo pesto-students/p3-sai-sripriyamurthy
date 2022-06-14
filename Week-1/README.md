@@ -30,6 +30,26 @@ When a user enters an URL in the browser, how does the browser fetch the desired
 3. What a browser is capable of doing.
 4. How a web page is translated from a string in a URL to a webpage.
 
+## What is the main functionality of the browser?
+
+What is the role of a browser in a client server?
+
+- Browser plays the client side interface role in Client Server Architecture
+- Browser allow client device to connect to a webserver and read the HTML files located on it
+- When the web browser send request to web server, these files are transferred to your computer as response that is interpreted by web browser to display the content
+- Web browser allow users to interact with web pages and other dynamic contents via hyperlinks that provides navigation facility i.e. to go to different locations by clicking on links that makes internet surfing easy
+
+Let us have a look on its processing. When user type any URL, for example https://google.com, the prefix of the URL decide how to retrieve it. The URL prefixes that the web browser is not able to handle directly is sent to related application. Like default email app is responsible to handle mailto: URL prefix.
+
+Following table gives an idea about some of the common URL prefixes:
+
+| **URL Prefix** | **URL Interpretation** |
+| :---: | :---:|
+| http: | Hypertext transfer protocol |
+| https: | Secured hypertext transfer protocol |
+| ftp: | File transfer protocol |
+| file: | Local File System |
+
 ## Browser High Level Structure
 
 Lets understand the Browser components 
@@ -52,6 +72,6 @@ The browser's main components are:
  
 - How to write README.md usiung markdown is learnt from [here](https://cloudaffaire.com/how-to-write-readme-md-using-markdown/)
  
-- Details about the assignment were learnt from [here](https://www.html5rocks.com/en/tutorials/internals/howbrowserswork/#The_browsers_we_will_talk_about), [here](https://www.youtube.com/watch?v=hJHvdBlSxug) and [here](https://www.youtube.com/watch?v=WjDrMKZWCt0&t=378s)
+- Details about the assignment were learnt from [here](https://www.html5rocks.com/en/tutorials/internals/howbrowserswork/#The_browsers_we_will_talk_about), [here](https://www.youtube.com/watch?v=hJHvdBlSxug), [here](https://msatechnosoft.in/blog/web-browser-functions-of-web-browser/) and [here](https://www.youtube.com/watch?v=WjDrMKZWCt0&t=378s)
  
 </details>
