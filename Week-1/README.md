@@ -50,7 +50,7 @@ The browser's main components are:
 
 <details><summary>Get details</summary>
  
-- How to write README.md usiung markdown is learnt from [here] (https://cloudaffaire.com/how-to-write-readme-md-using-markdown/)
+- How to write README.md usiung markdown is learnt from [here](https://cloudaffaire.com/how-to-write-readme-md-using-markdown/)
  
 - Details about the assignment were learnt from [here](https://www.html5rocks.com/en/tutorials/internals/howbrowserswork/#The_browsers_we_will_talk_about), [here](https://www.youtube.com/watch?v=hJHvdBlSxug) and [here](https://www.youtube.com/watch?v=WjDrMKZWCt0&t=378s)
  
