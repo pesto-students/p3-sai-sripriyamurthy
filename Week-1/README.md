@@ -4,14 +4,14 @@ Assignment on HTML
 ## How a Browser Works
 When a user enters an URL in the browser, how does the browser fetch the desired result ? Explain this with the below in mind and Demonstrate this by drawing a diagram for the same
 
-a. What is the main functionality of the browser?
-b. High Level Components of a browser.
-c. Rendering engine and its use.
-d. Parsers (HTML, CSS, etc)
-e. Script Processors
-f. Tree construction
-g. Order of script processing
-h. Layout and Painting
+1. What is the main functionality of the browser?
+2. High Level Components of a browser.
+3. Rendering engine and its use.
+4. Parsers (HTML, CSS, etc)
+5. Script Processors
+6. Tree construction
+7. Order of script processing
+8. Layout and Painting
 
 
 ## Guidelines:
@@ -29,4 +29,10 @@ h. Layout and Painting
 2. What are the features a browser provides?
 3. What a browser is capable of doing.
 4. How a web page is translated from a string in a URL to a webpage.
+
+## Browser High Level Structure
+
+Lets understand the components present in the browser High Level Structure
+
+# ![HighLevelStructure](media/Web-Browser-Components.png)
 
