@@ -86,7 +86,7 @@ After that, this is the basic flow of the rendering engine:
 
 # ![MainFlow](media/mainFlow.png)
 
-*** Figure : Rendering engine basic flow ***
+**Figure : Rendering engine basic flow**
 
 The rendering engine will start parsing the HTML document and convert elements to DOM nodes in a tree called the "content tree". The engine will parse the style data, both in external CSS files and in style elements. Styling information together with visual instructions in the HTML will be used to create another tree: the render tree.
 
