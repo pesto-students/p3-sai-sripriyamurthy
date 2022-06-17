@@ -241,25 +241,173 @@ The receiving of the body end token will cause a transfer to "after body" mode. 
 
 # ![TreeConstruction](media/TreeConstruction.png)
 
-## CSS parsing 
+## CSS PARSING
 
-Remember the parsing concepts in the introduction? Well, unlike HTML, CSS is a context free grammar and can be parsed using the types of parsers described in the introduction. In fact the CSS specification defines CSS lexical and syntax grammar.
+- Lexicon
+- Syntax
+- CSSOM Tree
+- WebKit’s CSS Parser
 
-Let's see some examples:
+Unlike HTML parsing, CSS parsing is relatively straightforward. It is a very simple language.
 
-The lexical grammar (vocabulary) is defined by regular expressions for each token:
----
-comment   \/\*[^*]*\*+([^/*][^*]*\*+)*\/
-num   [0-9]+|[0-9]*"."[0-9]+
-nonascii  [\200-\377]
-nmstart   [_a-z]|{nonascii}|{escape}
-nmchar    [_a-z0-9-]|{nonascii}|{escape}
-name    {nmchar}+
-ident   {nmstart}{nmchar}*
----
-"ident" is short for identifier, like a class name. "name" is an element id (that is referred by "#" )
+## The order of processing scripts and style sheets 
 
-The syntax grammar is described in BNF.
+# Scripts 
+The model of the web is synchronous. Authors expect scripts to be parsed and executed immediately when the parser reaches a <script> tag. The parsing of the document halts until the script has been executed. If the script is external then the resource must first be fetched from the network - this is also done synchronously, and parsing halts until the resource is fetched. This was the model for many years and is also specified in HTML4 and 5 specifications. Authors can add the "defer" attribute to a script, in which case it will not halt document parsing and will execute after the document is parsed. HTML5 adds an option to mark the script as asynchronous so it will be parsed and executed by a different thread.
+
+# Speculative parsing 
+Both WebKit and Firefox do this optimization. While executing scripts, another thread parses the rest of the document and finds out what other resources need to be loaded from the network and loads them. In this way, resources can be loaded on parallel connections and overall speed is improved. Note: the speculative parser only parses references to external resources like external scripts, style sheets and images: it doesn't modify the DOM tree - that is left to the main parser.
+
+# Style sheets 
+Style sheets on the other hand have a different model. Conceptually it seems that since style sheets don't change the DOM tree, there is no reason to wait for them and stop the document parsing. There is an issue, though, of scripts asking for style information during the document parsing stage. If the style is not loaded and parsed yet, the script will get wrong answers and apparently this caused lots of problems. It seems to be an edge case but is quite common. Firefox blocks all scripts when there is a style sheet that is still being loaded and parsed. WebKit blocks scripts only when they try to access certain style properties that may be affected by unloaded style sheets.
+
+# Render tree construction 
+While the DOM tree is being constructed, the browser constructs another tree, the render tree. This tree is of visual elements in the order in which they will be displayed. It is the visual representation of the document. The purpose of this tree is to enable painting the contents in their correct order.
+
+Firefox calls the elements in the render tree "frames". WebKit uses the term renderer or render object.
+
+A renderer knows how to lay out and paint itself and its children.
+
+WebKit's RenderObject class, the base class of the renderers, has the following definition:
+
+```
+class RenderObject{
+  virtual void layout();
+  virtual void paint(PaintInfo);
+  virtual void rect repaintRect();
+  Node* node;  //the DOM node
+  RenderStyle* style;  // the computed style
+  RenderLayer* containgLayer; //the containing z-index layer
+}
+```
+Each renderer represents a rectangular area usually corresponding to a node's CSS box, as described by the CSS2 spec. It includes geometric information like width, height and position.
+
+The box type is affected by the "display" value of the style attribute that is relevant to the node (see the style computation section). Here is WebKit code for deciding what type of renderer should be created for a DOM node, according to the display attribute:
+
+```
+RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
+{
+    Document* doc = node->document();
+    RenderArena* arena = doc->renderArena();
+    ...
+    RenderObject* o = 0;
+
+    switch (style->display()) {
+        case NONE:
+            break;
+        case INLINE:
+            o = new (arena) RenderInline(node);
+            break;
+        case BLOCK:
+            o = new (arena) RenderBlock(node);
+            break;
+        case INLINE_BLOCK:
+            o = new (arena) RenderBlock(node);
+            break;
+        case LIST_ITEM:
+            o = new (arena) RenderListItem(node);
+            break;
+       ...
+    }
+
+    return o;
+}
+```
+
+The element type is also considered: for example, form controls and tables have special frames.
+
+In WebKit if an element wants to create a special renderer, it will override the createRenderer() method. The renderers point to style objects that contains non geometric information.
+
+**The render tree relation to the DOM tree**
+The renderers correspond to DOM elements, but the relation is not one to one. Non-visual DOM elements will not be inserted in the render tree. An example is the "head" element. Also elements whose display value was assigned to "none" will not appear in the tree (whereas elements with "hidden" visibility will appear in the tree).
+
+There are DOM elements which correspond to several visual objects. These are usually elements with complex structure that cannot be described by a single rectangle. For example, the "select" element has three renderers: one for the display area, one for the drop down list box and one for the button. Also when text is broken into multiple lines because the width is not sufficient for one line, the new lines will be added as extra renderers.
+
+Another example of multiple renderers is broken HTML. According to the CSS spec an inline element must contain either only block elements or only inline elements. In the case of mixed content, anonymous block renderers will be created to wrap the inline elements.
+
+Some render objects correspond to a DOM node but not in the same place in the tree. Floats and absolutely positioned elements are out of flow, placed in a different part of the tree, and mapped to the real frame. A placeholder frame is where they should have been.
+
+# Style Computation
+Building the render tree requires calculating the visual properties of each render object. This is done by calculating the style properties of each element.
+
+The style includes style sheets of various origins, inline style elements and visual properties in the HTML (like the "bgcolor" property).The later is translated to matching CSS style properties.
+
+The origins of style sheets are the browser's default style sheets, the style sheets provided by the page author and user style sheets - these are style sheets provided by the browser user (browsers let you define your favorite styles. In Firefox, for instance, this is done by placing a style sheet in the "Firefox Profile" folder).
+
+Style computation brings up a few difficulties:
+
+Style data is a very large construct, holding the numerous style properties, this can cause memory problems.
+
+Finding the matching rules for each element can cause performance issues if it's not optimized. Traversing the entire rule list for each element to find matches is a heavy task. Selectors can have complex structure that can cause the matching process to start on a seemingly promising path that is proven to be futile and another path has to be tried.
+
+For example - this compound selector:
+
+```
+div div div div{
+...
+}
+```
+Means the rules apply to a <div> who is the descendant of 3 divs. Suppose you want to check if the rule applies for a given <div> element. You choose a certain path up the tree for checking. You may need to traverse the node tree up just to find out there are only two divs and the rule does not apply. You then need to try other paths in the tree.
+
+Applying the rules involves quite complex cascade rules that define the hierarchy of the rules.
+
+Let's see how the browsers face these issues:
+
+## Sharing style data
+WebKit nodes references style objects (RenderStyle). These objects can be shared by nodes in some conditions. The nodes are siblings or cousins and:
+
+1. The elements must be in the same mouse state (e.g., one can't be in :hover while the other isn't)
+2. Neither element should have an id
+3. The tag names should match
+4. The class attributes should match
+5. The set of mapped attributes must be identical
+6. The link states must match
+7. The focus states must match
+8. Neither element should be affected by attribute selectors, where affected is defined as having any selector match that uses an attribute selector in any position within the selector at all
+9. There must be no inline style attribute on the elements
+10. There must be no sibling selectors in use at all. WebCore simply throws a global switch when any sibling selector is encountered and disables style sharing for the entire document when they are present. This includes the + selector and selectors like :first-child and :last-child.
+
+## Painting
+In the painting stage, the render tree is traversed and the renderer's "paint()" method is called to display content on the screen. Painting uses the UI infrastructure component.
+
+# Global and Incremental 
+Like layout, painting can also be global - the entire tree is painted - or incremental. In incremental painting, some of the renderers change in a way that does not affect the entire tree. The changed renderer invalidates its rectangle on the screen. This causes the OS to see it as a "dirty region" and generate a "paint" event. The OS does it cleverly and coalesces several regions into one. In Chrome it is more complicated because the renderer is in a different process then the main process. Chrome simulates the OS behavior to some extent. The presentation listens to these events and delegates the message to the render root. The tree is traversed until the relevant renderer is reached. It will repaint itself (and usually its children).
+
+# The painting order
+CSS2 defines the order of the painting process. This is actually the order in which the elements are stacked in the stacking contexts. This order affects painting since the stacks are painted from back to front. The stacking order of a block renderer is:
+
+1. background color
+2. background image
+3. border
+4. children
+5. outline
+
+# Firefox display list
+
+Firefox goes over the render tree and builds a display list for the painted rectangular. It contains the renderers relevant for the rectangular, in the right painting order (backgrounds of the renderers, then borders etc).
+
+That way the tree needs to be traversed only once for a repaint instead of several times - painting all backgrounds, then all images, then all borders etc.
+
+Firefox optimizes the process by not adding elements that will be hidden, like elements completely beneath other opaque elements.
+
+# WebKit rectangle storage
+Before repainting, WebKit saves the old rectangle as a bitmap. It then paints only the delta between the new and old rectangles.
+
+# Dynamic changes
+The browsers try to do the minimal possible actions in response to a change. So changes to an element's color will cause only repaint of the element. Changes to the element position will cause layout and repaint of the element, its children and possibly siblings. Adding a DOM node will cause layout and repaint of the node. Major changes, like increasing font size of the "html" element, will cause invalidation of caches, relayout and repaint of the entire tree.
+
+# The rendering engine's threads
+The rendering engine is single threaded. Almost everything, except network operations, happens in a single thread. In Firefox and Safari this is the main thread of the browser. In Chrome it's the tab process main thread.
+
+Network operations can be performed by several parallel threads. The number of parallel connections is limited (usually 2 - 6 connections).
+
+# Event loop 
+The browser main thread is an event loop. It's an infinite loop that keeps the process alive. It waits for events (like layout and paint events) and processes them. This is Firefox code for the main event loop:
+
+```
+while (!mExiting)
+    NS_ProcessNextEvent(thread);
+```
 
 ## Details on the references used to create this README
 
