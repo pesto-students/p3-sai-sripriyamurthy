@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pesto Tech Sample</title>
+    <link rel="stylesheet" href="../mystyle.css">
+    <script>
+      
+            function evalSlider()
+            {
+                document.getElementById("slideOut").innerHTML=document.getElementById("slider").value;
+            }
+        
+        
+    </script>
+</head>
+
+<body>
+    <article id="wrapper">
+        <img src="../assets/images/pesto-logo-black.png" usemap="#hoveroverimg" alt="please click here" width="900px"
+            height="100px">
+
+        <map name="hoveroverimg">
+            <area shape="rect" coords="10, 5, 20, 15" href="index.html" alt="click here to go to Home page" />
+        </map>
+        <summary>Pesto is where top developers come to accelerate their careers & join a world-class
+            community. Our developers make 30 lakhs on average</summary>
+
+        <section id="authorintro">
+            <figure>
+                <img src="../assets/images/Sripriya.jpeg" width="100px" height="100px">
+                <figcaption>author intro</figcaption>
+            </figure>
+            <br>
+            <label for="by">By:</label> <a href=":mailto: sripriyamurthy07@gmail.com">Sripriya Murthy</a><br>
+            <span>MERN Full Stack Developer</span><br>
+            <span>Bangalore</span>
+        </section>
+
+        <h1>Lorem Ipsum</h1>
+        <div style="margin: 5px;padding:10px">
+            <nav>
+                <ul>
+                    <li>About Pesto</li>
+                    <li>Contact Us</li>
+                    <li>Know more about Us</li>
+                </ul>
+
+            </nav>
+
+            <p class="intro1"><strong>Lorem Ipsum</strong> is simply dummy text of the printing and typesetting
+                industry.
+                Lorem Ipsum has been
+                the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of
+                type
+                and
+                scrambled it to make a type specimen book. It has survived not only five centuries, but also the
+                leap
+                into
+                electronic typesetting, remaining essentially unchanged. </p>
+
+
+            <p class="intro2">It was popularised in the 1960s with the release of
+                Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+                like
+                Aldus
+                PageMaker including versions of<span class="red"> Lorem Ipsum.</span></p>
+
+
+        </div>
+        <br>
+        <hr size="3px" noshade>
+        <div>
+            <img class="wraparound" src="../assets/images/pesto-logo-black.png" alt="click here"
+                style="border:5px;width:25%;height:25%">
+            <p> The point of using <span class="brown">Lorem Ipsum </span>is that it has a more-or-less
+                normal
+                distribution of letters, as
+                opposed to using 'Content here, content here', making it look like readable English. Many desktop
+                publishing
+                packages and web page editors now use <span class="red"> Lorem Ipsum </span> as their default model
+                text, and
+                a search for 'lorem ipsum'
+                will uncover many web sites still in their infancy. Various versions have evolved over the years,
+                sometimes by
+                accident, sometimes on purpose (injected humour and the like).
+
+            </p>
+
+        </div>
+        <hr size="3px" noshade>
+        <div class="listsection">
+            <h2> Points to remember</h4>
+                <ul type="square">
+                    <li>Sessions to attend every week</li>
+                    <ol type="i">
+                        <li>1:1 session</li>
+                        <li>Instructor session</li>
+                        <li>Sunday session</li>
+                        <li>Softskill session</li>
+                        <li>Mentor group session</li>
+                    </ol>
+                    <li>Complete the teachables for that week</li>
+                    <li>Approach mentor whenever stuck</li>
+                    <li>Work as a team - know your classmates and learn together</li>
+                    </ol>
+
+        </div>
+        <hr size="3px" noshade>
+
+        <h2> Please enter the details below and register</h2>
+
+        <form action="#" method="post">
+
+            <table>
+                <tr>
+                    <td>First Name:</td>
+                    <td><input type="text" name="firstname" id="firstname" value="Enter first name"></td>
+                </tr>
+                <tr>
+                    <td>Last Name:</td>
+                    <td><input type="text" name="lastname" id="lastname"></td>
+                </tr>
+                <tr>
+                    <td>Title:</td>
+                    <td>
+                        <label for="mr"><input type="radio" name="title" value="radio" id="mr">Mr.</label>
+                        <label for="mrs"><input type="radio" name="title" value="radio" id="mrs">Mrs.</label>
+                        <label for="miss"><input type="radio" name="title" value="radio" id="miss">Ms.</label>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        DOB:
+                    </td>
+                    <td>
+                        <input type="date" id="dob" min="1900-01-01" />
+                      
+                    </td>
+                </tr>   
+                <tr>
+                    <td>Email:</td>
+                    <td><input type="text" name="email" id="email" size="50" maxlength="30"></td>
+                </tr>
+                <tr>
+                    <td>Enter Password:</td>
+                    <td><input type="password" name="pwd" id="pwd" size="20"></td>
+                </tr>
+                <tr>
+                    <td>ReEnter Password:</td>
+                    <td><input type="password" name="pwd1" id="pwd1" size="20"></td>
+                </tr>
+                <tr>
+                    <td>Tell us something about yourself:</td>
+                    <td><textarea name="descr" id="descr" size="100"></textarea></td>
+                </tr>
+
+                <tr>
+                    <td>Interests:</td>
+                    <td>
+                        <label for="tvshows"><input type="checkbox" name="interests" value="checkbox" id="interest_0">TV
+                            Shows</label>
+                        <label for="news"><input type="checkbox" name="interests" value="checkbox"
+                                id="interest_1">News</label>
+                        <label for="sports"><input type="checkbox" name="interests" value="checkbox"
+                                id="interest_2">Sports</label>
+                        <label for="movies"><input type="checkbox" name="interests" value="checkbox" id="interest_3">
+                            Movies</label>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Country: </td>
+                    <td>
+                        <select name="country" id="country">
+                            <option value="india" id="india">India</option>
+                            <option value="australia" id="australia">Australia</option>
+                            <option value="germany" id="germany">Germany</option>
+                            <option value="nepal" id="nepal">Nepal</option>
+                            <option value="netherlands" id="netherlands">Netherlands</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        # of Hours ready to spend for studying per day:
+                    </td>
+                    <td>
+                        <input type="number" min="1" max="8">
+                    </td>
+                </tr>
+
+               
+                <tr>
+                    <td>
+                        Rate yourself in HTML/CSS/JS out of 10:
+                    </td>
+                    <td>
+                        <input type="range" id="slider" min="0" max="10" onchange="evalSlider()"/>
+                        <output id="slideOut"></output>
+                    </td>
+                </tr>   
+
+
+
+                <tr>
+                    <td>
+                        <input type="submit" name="submit" id="submit" value="Submit">
+                    </td>
+                    <td></td>
+                </tr>
+
+
+            </table>
+
+
+            <footer>
+
+            </footer>
+
+        </form>
+
+    </article>
+    <!--wrapper -->
+</body>
+
+</html>
